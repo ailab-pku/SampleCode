@@ -145,7 +145,7 @@ template <>
 struct std::hash<QueensState> {
     
     // Cantor Expansion
-    size_t operator()(const QueensState& s) const {
+    size_t operator() (const QueensState& s) const {
         
         static std::vector<size_t> factorial = {1};
         size_t sum = 0;

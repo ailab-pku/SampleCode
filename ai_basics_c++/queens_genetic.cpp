@@ -34,7 +34,6 @@ private:
             ++ lr[xi-yi+n_queens-1];   
         }
 
-        
         for (int i = 0, xi, yi; i < n_queens; ++ i){
             xi = i;
             yi = c[i];

@@ -10,7 +10,7 @@
 #include "../interface/state.hpp"
 
 template<typename StateType>
-class UniformCostSearch : public HeuristicSearch<StateType>{
+class UniformCostSearch : protected HeuristicSearch<StateType>{
 private:
 
     static double state_value_estimator(const StateType& state){

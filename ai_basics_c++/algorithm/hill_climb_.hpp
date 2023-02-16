@@ -4,21 +4,23 @@
 #include <random>
 #include <type_traits>
 
-#include "../interface/state_local.hpp"
+#include "../interface/state.hpp"
 
 // hill climbing with roulette algorithm & random restart
-template <typename StateLocalType> 
+template <typename StateType> 
 class HillClimb{
 private:
     
-    StateLocalType initial_state;
+    StateType initial_state;
 
     mutable std::default_random_engine random_engine;
     mutable std::uniform_real_distribution<double> uniform_dist;
-    
-    typedef double (*ValueEstimatorType) (const StateLocalType&);
 
-    static_assert(std::is_base_of<StateLocalBase, StateLocalType>::value, "StateLocalType not derived from StateLocalBase.");
+    typedef typename StateType::ActionBaseType ActionType;
+    
+    typedef double (*ValueEstimatorType) (const StateType&);
+
+    static_assert(std::is_base_of<StateBase<ActionType>, StateType>::value, "StateType not derived from StateBase.");
 
     // roulette algorithm
     int select_index_with_values(const std::vector<double>& values) const {
@@ -40,27 +42,29 @@ private:
         return index;
     }
 
-    const StateLocalType& sample_path(ValueEstimatorType value_of, double target_value){
+    const StateType& sample_path(ValueEstimatorType value_of){
         
-        static StateLocalType state;
-        StateLocalType new_state;
+        static StateType state;
+        StateType new_state;
+        ActionType action;
         std::vector<double> values;
         int index;
 
         state = initial_state;
 
-        while (value_of(state) < target_value and state.neighbor_count() != 0){
+        while (not (state.fail() or state.success())){
             
             values.clear();
             
-            for (index = 0; index < state.neighbor_count(); ++ index){
+            for (ActionType action : state.action_space()){
                 
-                new_state = state.neighbor(index);
+                new_state = state.next(action);
                 values.push_back(value_of(new_state));
             }
             
             index = select_index_with_values(values);
-            state = state.neighbor(index);
+            action = state.action_space()[index];
+            state = state.next(action);
         }
 
         return state;
@@ -68,17 +72,23 @@ private:
 
 public:
 
-    HillClimb(const StateLocalType& state) : initial_state(state) {
+    HillClimb(const StateType& state) : initial_state(state) {
         random_engine.seed(time(nullptr));
     }
     
-    void search(ValueEstimatorType value_of, float target_value, int iterations){
+    void search(ValueEstimatorType value_of, int iterations){
 
-        StateLocalType state;
+        StateType state;
 
         for (int i = 0; i < iterations; ++ i){
-            state = sample_path(value_of, target_value);
-            state.show();
+            
+            state = sample_path(value_of);
+            
+            if (state.success()){
+                state.show();
+                break;
+            }   
         }
     }
 };
+

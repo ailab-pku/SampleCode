@@ -1,10 +1,12 @@
 #include "problem/queens.hpp"
 #include "algorithm/simulated_anneal.hpp"
 
-int n = 500;
+int n = 20;
 
-double queen_state_value_estimator(const QueensState& state){
-    return state.action_space().size() + state.current_row() * 1.5;
+typedef StateLocalWrapper<QueensState> QueensStateLocal; 
+
+double queen_state_value_estimator(const QueensStateLocal& state){
+    return state.neighbor_count() + state.state().current_row() * 1.5;
 }
 
 double temperature_schedule(int time){
@@ -14,9 +16,9 @@ double temperature_schedule(int time){
 int main(){
 
     QueensState s(n);
-    SimulatedAnneal<QueensState> sa(s, 1e-8);
+    SimulatedAnneal<QueensStateLocal> sa(s, 1e-8);
 
-    sa.search(queen_state_value_estimator, temperature_schedule, 10000);
+    sa.search(queen_state_value_estimator, temperature_schedule, 1000);
 
     return 0;
 }

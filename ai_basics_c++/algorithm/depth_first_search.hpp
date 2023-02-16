@@ -20,16 +20,16 @@ public:
 
     DepthFirstSearch(const StateType& state) : initial_state(state) {}
     
-    void search(){
+    void search(bool is_tree=true){
 
         // items: (state, num of actions explored at state)
         std::stack<std::pair<StateType, int> > states_stack;
 
-        // to prevent duplicate states appearing in the stack
-        //std::unordered_set<StateType> explored_states;
+        // to prevent duplicate states appearing in the stack, if is_tree==false
+        std::unordered_set<StateType> explored_states;
         
         states_stack.push(std::make_pair(initial_state, 0));
-        //explored_states.insert(initial_state);
+        explored_states.insert(initial_state);
 
         StateType state, new_state;
         std::pair<StateType, int> state_action;
@@ -63,10 +63,15 @@ public:
                 new_state = state.next(state.action_space()[action_id]);
                 
                 // if new state is not explored, start from new state
-                //if (explored_states.find(new_state) == explored_states.end()){
+                if (is_tree){
+                    
                     states_stack.push(std::make_pair(new_state, 0));
-                    //explored_states.insert(new_state);
-                //}
+
+                } else if (explored_states.find(new_state) == explored_states.end()){
+                    
+                    states_stack.push(std::make_pair(new_state, 0));
+                    explored_states.insert(new_state);
+                }
             }
         }
     }
