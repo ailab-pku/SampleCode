@@ -2,9 +2,13 @@
 
 #include <type_traits>
 #include <unordered_set>
+#include <unordered_map>
+#include <stack>
 #include <queue>
+#include <iostream>
 
 #include "../interface/state.hpp"
+#include "../utils/show_path.hpp"
 
 template<typename StateType> 
 class BreadthFirstSearch{
@@ -20,11 +24,14 @@ public:
 
     BreadthFirstSearch(const StateType& state) : initial_state(state) {}
 
-    void search(){
+    void search(bool tree_search=true, bool require_path=true){
 
         std::queue<StateType> states_queue;
 
-        // to prevent duplicate states appearing in the queue
+        // record previous state of a state
+        std::unordered_map<StateType, StateType> last_state_of;
+
+        // to prevent duplicate states appearing in the queue, if tree_search==false
         std::unordered_set<StateType> explored_states;
         
         states_queue.push(initial_state);
@@ -39,7 +46,11 @@ public:
             states_queue.pop();
 
             if (state.success()){
-                state.show();
+                if (require_path){
+                    show_reversed_path(last_state_of, state);
+                } else {
+                    state.show();
+                }
                 continue;
             }
             
@@ -52,11 +63,22 @@ public:
                 
                 new_state = state.next(action);
                 
-                // if new_state is not explored
-                if (explored_states.find(new_state) == explored_states.end()){
+                // if new state is not explored, start from new state
+                if (tree_search){
+
+                    states_queue.push(new_state);
+                    
+                    if (require_path){
+                        last_state_of[new_state] = state;
+                    }
+                } else if (explored_states.find(new_state) == explored_states.end()){
                     
                     states_queue.push(new_state);
                     explored_states.insert(new_state);
+
+                    if (require_path){
+                        last_state_of[new_state] = state;
+                    }
                 }
             }
         }  

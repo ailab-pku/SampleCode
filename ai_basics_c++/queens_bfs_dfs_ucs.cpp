@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include "problem/queens.hpp"
+#include "problem/queens_swap.hpp"
+
 #include "algorithm/depth_first_search.hpp"
 #include "algorithm/breadth_first_search.hpp"
 #include "algorithm/heuristic_search.hpp"
@@ -11,13 +13,15 @@ double queens_state_value_estimator(const QueensState& s){
 }
 
 int main(){
-    QueensState state(8);
+    //QueensState state(8);
     //BreadthFirstSearch<QueensState> s(state);
     //DepthFirstSearch<QueensState> s(state);
     //UniformCostSearch<QueensState> s(state);
     //HeuristicSearch<QueensState> s(state);
     
-    UniformCostSearch<QueensState> s(state);
+    QueensSwapState state(8);
+    UniformCostSearch<QueensSwapState> s(state);
+
     s.search();
 
     return 0;

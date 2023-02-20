@@ -7,7 +7,7 @@ class PopulationBase{
 public:
     
     PopulationBase() = default;
-    virtual ~PopulationBase() {}
+    virtual ~PopulationBase() = default;
 
     typedef ChromosomeType ChromosomeBaseType;
 

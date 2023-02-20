@@ -4,6 +4,7 @@
 #include <type_traits>
 
 #include "../interface/population.hpp"
+#include "../utils/random_variables.hpp"
 
 template <typename PopulationType>
 class GeneticAlgorithm{

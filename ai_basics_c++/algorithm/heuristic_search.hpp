@@ -7,6 +7,7 @@
 #include <type_traits>
 
 #include "../interface/state.hpp"
+#include "../utils/show_path.hpp"
 
 template<typename StateType>
 class HeuristicSearch{
@@ -35,8 +36,6 @@ public:
         states_queue.push(initial_state);
 
         best_value_of[initial_state] = 0;
-
-        initial_state.show();
 
         while (not states_queue.empty()){
 
@@ -69,21 +68,7 @@ public:
 
         // output the best path
         if (state.success()){
-
-            std::stack<StateType> path;
-            
-            while (last_state_of.find(state) != last_state_of.end()){
-                
-                path.push(state);
-                state = last_state_of[state];
-            }
-            
-            while (not path.empty()){
-                
-                state = path.top();
-                path.pop();
-                state.show();
-            }
+            show_reversed_path(last_state_of, state);
         }
     }
 };

@@ -56,7 +56,7 @@ private:
 public:
 
     EightPuzzleState() = default;
-    EightPuzzleState(const std::vector<int>& state) : _state(0LL), _cumulative_cost(0) {
+    EightPuzzleState(const std::vector<int>& state) : _state(0), _cumulative_cost(0) {
         
         for (int i = 0; i < 9; ++ i){
             set_digit_at(i, state[i]);

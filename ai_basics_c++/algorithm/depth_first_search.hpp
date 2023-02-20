@@ -2,9 +2,11 @@
 
 #include <type_traits>
 #include <unordered_set>
+#include <unordered_map>
 #include <stack>
 
 #include "../interface/state.hpp"
+#include "../utils/show_path.hpp"
 
 template <typename StateType> 
 class DepthFirstSearch{
@@ -20,12 +22,15 @@ public:
 
     DepthFirstSearch(const StateType& state) : initial_state(state) {}
     
-    void search(bool is_tree=true){
+    void search(bool tree_search=true, bool require_path=true){
 
         // items: (state, num of actions explored at state)
         std::stack<std::pair<StateType, int> > states_stack;
 
-        // to prevent duplicate states appearing in the stack, if is_tree==false
+        // record previous state of a state
+        std::unordered_map<StateType, StateType> last_state_of;
+
+        // to prevent duplicate states appearing in the stack, if tree_search==false
         std::unordered_set<StateType> explored_states;
         
         states_stack.push(std::make_pair(initial_state, 0));
@@ -45,7 +50,11 @@ public:
             action_id = state_action.second;
 
             if (state.success()){
-                state.show();
+                if (require_path){
+                    show_reversed_path(last_state_of, state);
+                } else {
+                    state.show();
+                }
                 continue;
             }
 
@@ -63,14 +72,21 @@ public:
                 new_state = state.next(state.action_space()[action_id]);
                 
                 // if new state is not explored, start from new state
-                if (is_tree){
+                if (tree_search){
                     
                     states_stack.push(std::make_pair(new_state, 0));
-
+                    
+                    if (require_path){
+                        last_state_of[new_state] = state;
+                    }
                 } else if (explored_states.find(new_state) == explored_states.end()){
                     
                     states_stack.push(std::make_pair(new_state, 0));
                     explored_states.insert(new_state);
+                    
+                    if (require_path){
+                        last_state_of[new_state] = state;
+                    }
                 }
             }
         }

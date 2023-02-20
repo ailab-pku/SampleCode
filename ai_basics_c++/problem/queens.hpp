@@ -68,8 +68,6 @@ public:
 
     void show() const override {
 
-        std::cout << "<begin>" << std::endl;
-        
         for (int r = 0; r < _n_queens; ++ r){
             
             if (r >= _current_row){
@@ -92,7 +90,7 @@ public:
             std::cout << _queens[r] << ' ';
         }
 
-        std::cout << std::endl << "<end>" << std::endl;
+        std::cout << std::endl << std::endl;
     }
 
     double cost() const override {
@@ -137,7 +135,7 @@ public:
     friend struct std::hash<QueensState>;
     
     friend bool operator== (const QueensState& s1, const QueensState& s2){
-        return s1._current_row == s2._current_row and s1._queens == s2._queens;
+        return s1._current_row == s2._current_row and s1._queens == s2._queens and s1._n_queens == s2._n_queens;
     }
 };
 

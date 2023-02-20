@@ -8,7 +8,7 @@ class StateLocalBase{
 public:
     
     StateLocalBase() = default;
-    virtual ~StateLocalBase() {}
+    virtual ~StateLocalBase() = default;
 
     virtual int neighbor_count() const = 0;
     virtual const StateLocalBase& neighbor(int neighbor_index) const = 0;

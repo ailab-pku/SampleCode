@@ -18,10 +18,9 @@ class StateBase{
 public:
     
     StateBase() = default;
-    virtual ~StateBase() {}
+    virtual ~StateBase() = default;
 
     typedef ActionType ActionBaseType;
-    typedef StateBase<ActionType> StateBaseType;
 
     virtual std::vector<ActionType> action_space() const = 0;
     
@@ -39,35 +38,15 @@ public:
     virtual void show() const = 0;
 
     // next state through action
-    virtual const StateBaseType& next(const ActionType&) const = 0;
+    virtual const StateBase& next(const ActionType&) const = 0;
 
     // state hasher
-    friend struct std::hash<StateBaseType>;
+    friend struct std::hash<StateBase>;
     
     // default comparators
 
     // operator== shall be redefined by derived classes.
-    friend bool operator== (const StateBaseType& s1, const StateBaseType& s2){
+    friend bool operator== (const StateBase& s1, const StateBase& s2){
         return s1.cumulative_cost() == s2.cumulative_cost();
-    }
-
-    friend bool operator!= (const StateBaseType& s1, const StateBaseType& s2){
-        return s1.cumulative_cost() != s2.cumulative_cost();
-    }
-    
-    friend bool operator>= (const StateBaseType& s1, const StateBaseType& s2){
-        return s1.cumulative_cost() >= s2.cumulative_cost();
-    }
-    
-    friend bool operator<= (const StateBaseType& s1, const StateBaseType& s2){
-        return s1.cumulative_cost() <= s2.cumulative_cost();
-    }
-    
-    friend bool operator< (const StateBaseType& s1, const StateBaseType& s2){
-        return s1.cumulative_cost() < s2.cumulative_cost();
-    }
-    
-    friend bool operator> (const StateBaseType& s1, const StateBaseType& s2){
-        return s1.cumulative_cost() > s2.cumulative_cost();
     }
 };
